@@ -33,7 +33,7 @@ export default function Setup() {
   };
 
   return (
-    <div className="min-h-screen bg-ff-blue flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-ff-blue flex flex-col items-center justify-center p-4 sm:p-6">
       <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -46,11 +46,11 @@ export default function Setup() {
           ← Back
         </button>
 
-        <h2 className="gold-shimmer text-4xl font-black uppercase text-center mb-8">
+        <h2 className="gold-shimmer text-3xl sm:text-4xl font-black uppercase text-center mb-6 sm:mb-8">
           Game Setup
         </h2>
 
-        <div className="bg-ff-navy rounded-2xl p-6 border border-blue-800 space-y-6">
+        <div className="bg-ff-navy rounded-2xl p-4 sm:p-6 border border-blue-800 space-y-5 sm:space-y-6">
           {/* Team Names */}
           <div>
             <label className="text-ff-gold text-sm uppercase tracking-widest font-bold block mb-3">
@@ -85,12 +85,12 @@ export default function Setup() {
                 (last round = double points)
               </span>
             </label>
-            <div className="flex gap-3">
+            <div className="grid grid-cols-5 gap-2 sm:gap-3">
               {[2, 3, 4, 5, 6].map((n) => (
                 <button
                   key={n}
                   onClick={() => setTotalRounds(n)}
-                  className={`flex-1 py-3 rounded-lg font-black text-lg border-2 transition-all ${
+                  className={`py-3 rounded-lg font-black text-lg border-2 transition-all ${
                     totalRounds === n
                       ? 'bg-ff-gold text-ff-blue border-ff-gold'
                       : 'bg-ff-tile text-white border-blue-700 hover:border-ff-gold'

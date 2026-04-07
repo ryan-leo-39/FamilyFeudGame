@@ -142,9 +142,9 @@ export default function FastMoney() {
     const total = [...(p1 || []), ...p2Saved].reduce((s, a) => s + (a?.points || 0), 0);
 
     return (
-      <div className="min-h-screen bg-ff-blue flex flex-col items-center justify-center p-4">
-        <h2 className="gold-shimmer text-4xl font-black uppercase mb-6">Fast Money Results</h2>
-        <div className="w-full max-w-2xl space-y-3 mb-8">
+      <div className="min-h-screen bg-ff-blue flex flex-col p-4 pb-28">
+        <h2 className="gold-shimmer text-3xl sm:text-4xl font-black uppercase text-center mb-4 sm:mb-6">Fast Money Results</h2>
+        <div className="w-full max-w-2xl mx-auto space-y-3 mb-8">
           {fastMoneyQuestions.map((q, i) => {
             const p1a = p1?.[i];
             const p2a = p2Saved[i];
@@ -176,53 +176,57 @@ export default function FastMoney() {
           })}
         </div>
 
-        {!showResult ? (
-          <button
-            onClick={handleRevealNext}
-            className="px-8 py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl text-xl"
-          >
-            {revealIndex === -1 ? 'Start Reveal' : revealIndex < fastMoneyQuestions.length - 1 ? 'Next →' : 'Show Total'}
-          </button>
-        ) : (
+        {showResult && (
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: 'spring' }}
-            className="text-center"
+            className="text-center max-w-2xl mx-auto mb-4"
           >
-            <div className={`text-6xl font-black number-glow mb-2 ${total >= 200 ? 'text-ff-gold' : 'text-white'}`}>
+            <div className={`text-5xl sm:text-6xl font-black number-glow mb-2 ${total >= 200 ? 'text-ff-gold' : 'text-white'}`}>
               {total} pts
             </div>
-            <div className={`text-xl font-black uppercase mb-6 ${total >= 200 ? 'text-ff-gold' : 'text-blue-300'}`}>
+            <div className={`text-lg sm:text-xl font-black uppercase ${total >= 200 ? 'text-ff-gold' : 'text-blue-300'}`}>
               {total >= 200 ? '🎉 Big Winner! 200+ Points!' : 'Nice Try!'}
             </div>
+          </motion.div>
+        )}
+
+        {/* Sticky bottom button */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-ff-blue border-t border-blue-800">
+          {!showResult ? (
+            <button
+              onClick={handleRevealNext}
+              className="w-full max-w-2xl mx-auto block py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl text-lg sm:text-xl"
+            >
+              {revealIndex === -1 ? 'Start Reveal' : revealIndex < fastMoneyQuestions.length - 1 ? 'Next →' : 'Show Total'}
+            </button>
+          ) : (
             <button
               onClick={() => { dispatch({ type: 'END_GAME' }); navigate('/gameover'); }}
-              className="px-8 py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl"
+              className="w-full max-w-2xl mx-auto block py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl text-lg sm:text-xl"
             >
               See Final Scores →
             </button>
-          </motion.div>
-        )}
+          )}
+        </div>
       </div>
     );
   }
 
   // Answering phase
   return (
-    <div className="min-h-screen bg-ff-blue flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-xl">
-        <h2 className="gold-shimmer text-4xl font-black uppercase text-center mb-2">
-          Fast Money
-        </h2>
-        <div className="text-center text-blue-300 text-sm mb-6 uppercase tracking-widest">
-          {teamNames[playingTeam]} — Player {playerRound + 1}
+    <div className="min-h-screen bg-ff-blue flex flex-col">
+      {/* Sticky header with timer */}
+      <div className="sticky top-0 z-10 bg-ff-navy border-b border-blue-800 px-4 py-3 flex items-center justify-between">
+        <div className="text-center">
+          <div className="text-blue-400 text-xs uppercase tracking-widest">Fast Money</div>
+          <div className="text-white font-black text-sm uppercase">{teamNames[playingTeam]} — P{playerRound + 1}</div>
         </div>
 
-        {/* Timer */}
-        <div className="flex items-center justify-center gap-4 mb-6">
+        <div className="flex items-center gap-3">
           <div
-            className={`text-6xl font-black number-glow ${
+            className={`text-5xl font-black number-glow ${
               timer <= 5 ? 'timer-warning' : 'text-ff-gold'
             }`}
           >
@@ -231,22 +235,24 @@ export default function FastMoney() {
           {!timerActive ? (
             <button
               onClick={handleStartTimer}
-              className="px-4 py-2 bg-ff-green text-white font-black uppercase rounded-lg border border-green-500 text-sm"
+              className="px-4 py-3 bg-ff-green text-white font-black uppercase rounded-lg border border-green-500 text-sm min-w-[64px]"
             >
               Start
             </button>
           ) : (
             <button
               onClick={handleStopTimer}
-              className="px-4 py-2 bg-ff-red text-white font-black uppercase rounded-lg border border-red-500 text-sm"
+              className="px-4 py-3 bg-ff-red text-white font-black uppercase rounded-lg border border-red-500 text-sm min-w-[64px]"
             >
               Stop
             </button>
           )}
         </div>
+      </div>
 
-        {/* Questions & answers */}
-        <div className="space-y-3 mb-6">
+      {/* Scrollable questions */}
+      <div className="flex-1 overflow-y-auto p-4 pb-28">
+        <div className="max-w-xl mx-auto space-y-3">
           {fastMoneyQuestions.map((q, i) => (
             <div key={i} className="bg-ff-navy rounded-xl p-4 border border-blue-800">
               <p className="text-white font-bold text-sm uppercase tracking-wide mb-2">
@@ -257,17 +263,20 @@ export default function FastMoney() {
                 value={currentAnswers[i]}
                 onChange={(e) => handleAnswerChange(i, e.target.value)}
                 placeholder="Type answer here..."
-                className="w-full bg-ff-tile text-white px-3 py-2 rounded-lg border border-blue-700 focus:border-ff-gold focus:outline-none text-sm"
+                className="w-full bg-ff-tile text-white px-3 py-3 rounded-lg border border-blue-700 focus:border-ff-gold focus:outline-none text-sm"
               />
             </div>
           ))}
         </div>
+      </div>
 
+      {/* Sticky submit button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-ff-blue border-t border-blue-800">
         <button
           onClick={handleSubmitPlayer}
-          className="w-full py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl text-xl"
+          className="w-full max-w-xl mx-auto block py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue font-black uppercase rounded-xl text-lg sm:text-xl"
         >
-          {playerRound === 0 ? 'Submit Player 1 Answers →' : 'Submit Player 2 & Reveal →'}
+          {playerRound === 0 ? 'Submit Player 1 →' : 'Submit Player 2 & Reveal →'}
         </button>
       </div>
     </div>

@@ -190,12 +190,12 @@ export default function Admin() {
     <div className="min-h-screen bg-ff-blue p-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-wrap items-center gap-3 mb-6">
           <button onClick={() => navigate('/')} className="text-ff-gold text-sm hover:underline">
             ← Home
           </button>
-          <h2 className="gold-shimmer text-3xl font-black uppercase">Question Manager</h2>
-          <div className="flex gap-2">
+          <h2 className="gold-shimmer text-2xl sm:text-3xl font-black uppercase flex-1 text-center">Question Manager</h2>
+          <div className="flex gap-2 flex-wrap justify-end">
             <button
               onClick={handlePrintAnswerKey}
               className="px-3 py-2 bg-ff-gold text-ff-blue text-xs font-black uppercase rounded-lg border border-ff-gold hover:brightness-110 transition-all"
@@ -319,7 +319,7 @@ export default function Admin() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="bg-ff-navy rounded-2xl p-6 w-full max-w-lg border border-blue-700 my-4"
+              className="bg-ff-navy rounded-2xl p-4 sm:p-6 w-full max-w-lg border border-blue-700 my-4 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-ff-gold font-black uppercase text-lg mb-4">

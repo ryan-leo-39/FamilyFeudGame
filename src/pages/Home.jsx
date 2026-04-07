@@ -39,21 +39,21 @@ export default function Home() {
           </div>
         </div>
 
-        <h1 className="gold-shimmer text-6xl md:text-8xl font-black uppercase tracking-wide drop-shadow-2xl mb-2">
+        <h1 className="gold-shimmer text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-wide drop-shadow-2xl mb-2">
           Family
         </h1>
-        <h1 className="gold-shimmer text-6xl md:text-8xl font-black uppercase tracking-wide drop-shadow-2xl mb-8">
+        <h1 className="gold-shimmer text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-wide drop-shadow-2xl mb-8">
           Feud
         </h1>
 
-        <div className="w-64 h-1 bg-gradient-to-r from-transparent via-ff-gold to-transparent mx-auto mb-10" />
+        <div className="w-48 sm:w-64 h-1 bg-gradient-to-r from-transparent via-ff-gold to-transparent mx-auto mb-8 sm:mb-10" />
 
         <div className="flex flex-col gap-4 items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => { handleGoHome(); navigate('/setup'); }}
-            className="w-64 py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue text-xl font-black uppercase tracking-wider rounded-lg shadow-lg border-2 border-ff-gold hover:brightness-110 transition-all"
+            className="w-56 sm:w-64 py-4 bg-gradient-to-b from-ff-gold to-ff-gold-dark text-ff-blue text-xl font-black uppercase tracking-wider rounded-lg shadow-lg border-2 border-ff-gold hover:brightness-110 transition-all"
           >
             New Game
           </motion.button>
@@ -62,7 +62,7 @@ export default function Home() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/admin')}
-            className="w-64 py-4 bg-transparent text-ff-gold text-xl font-black uppercase tracking-wider rounded-lg shadow-lg border-2 border-ff-gold hover:bg-ff-gold hover:text-ff-blue transition-all"
+            className="w-56 sm:w-64 py-4 bg-transparent text-ff-gold text-xl font-black uppercase tracking-wider rounded-lg shadow-lg border-2 border-ff-gold hover:bg-ff-gold hover:text-ff-blue transition-all"
           >
             Manage Questions
           </motion.button>
