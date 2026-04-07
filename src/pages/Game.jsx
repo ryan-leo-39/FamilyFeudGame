@@ -78,12 +78,12 @@ export default function Game() {
             <StrikeDisplay strikes={strikes} />
           </div>
 
-          {/* Answer board */}
+          {/* Answer board — always 8 boxes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {currentQuestion.answers.map((ans, i) => (
+            {Array.from({ length: 8 }).map((_, i) => (
               <AnswerTile
                 key={i}
-                answer={ans}
+                answer={currentQuestion.answers[i] || null}
                 index={i}
                 revealed={revealedAnswers.includes(i)}
                 isLastRound={isLastRound}

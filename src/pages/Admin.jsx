@@ -7,7 +7,7 @@ const BLANK_ANSWER = { text: '', points: 0 };
 const BLANK_QUESTION = {
   id: '',
   question: '',
-  answers: Array(6).fill(null).map(() => ({ ...BLANK_ANSWER })),
+  answers: Array(8).fill(null).map(() => ({ ...BLANK_ANSWER })),
   isFastMoney: false,
 };
 
@@ -73,21 +73,26 @@ export default function Admin() {
       alert('Please enter a question.');
       return;
     }
-    const totalPts = editing.answers.reduce((s, a) => s + Number(a.points), 0);
+    const filledAnswers = editing.answers.filter((a) => a.text.trim());
+    if (filledAnswers.length < 2) {
+      alert('Please add at least 2 answers.');
+      return;
+    }
+    const totalPts = filledAnswers.reduce((s, a) => s + Number(a.points), 0);
     if (totalPts !== 100) {
-      alert(`Points must add up to 100. Currently: ${totalPts}`);
+      alert(`Points for filled answers must add up to 100. Currently: ${totalPts}`);
       return;
     }
-    const emptyAnswers = editing.answers.filter((a) => !a.text.trim());
-    if (emptyAnswers.length > 0) {
-      alert('All answer fields must be filled in.');
-      return;
-    }
+    // Only keep filled answers + strip empty trailing slots
+    const cleanedAnswers = editing.answers.map((a) =>
+      a.text.trim() ? { text: a.text.trim(), points: Number(a.points) } : { text: '', points: 0 }
+    );
 
+    const savedQuestion = { ...editing, answers: cleanedAnswers };
     setCurrentList((prev) => {
       const exists = prev.find((q) => q.id === editing.id);
-      if (exists) return prev.map((q) => (q.id === editing.id ? editing : q));
-      return [...prev, editing];
+      if (exists) return prev.map((q) => (q.id === editing.id ? savedQuestion : q));
+      return [...prev, savedQuestion];
     });
     setEditing(null);
   };
@@ -105,6 +110,62 @@ export default function Admin() {
     a.download = 'family-feud-questions.json';
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handlePrintAnswerKey = () => {
+    const allQ = loadFromStorage('ff-questions', sampleQuestions);
+    const fmQ = loadFromStorage('ff-fastmoney-questions', sampleFastMoneyQuestions);
+
+    const renderQuestions = (list, prefix) =>
+      list.map((q, qi) => `
+        <div class="question">
+          <div class="question-text">${prefix}${qi + 1}. ${q.question}</div>
+          <table>
+            <tr><th>#</th><th>Answer</th><th>Points</th></tr>
+            ${q.answers
+              .filter((a) => a.text)
+              .map((a, i) => `<tr><td>${i + 1}</td><td>${a.text}</td><td class="pts">${a.points}</td></tr>`)
+              .join('')}
+          </table>
+        </div>`).join('');
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Family Feud — Answer Key</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 820px; margin: 0 auto; padding: 24px; color: #111; }
+    h1 { text-align: center; color: #0d2044; margin-bottom: 4px; }
+    .subtitle { text-align: center; color: #888; font-size: 13px; margin-bottom: 24px; }
+    h2 { color: #c8841a; border-bottom: 3px solid #c8841a; padding-bottom: 6px; margin-top: 32px; }
+    .question { margin-bottom: 22px; page-break-inside: avoid; }
+    .question-text { font-weight: bold; font-size: 15px; margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #1a3a6b; color: white; padding: 5px 10px; text-align: left; }
+    td { padding: 4px 10px; border-bottom: 1px solid #ddd; }
+    tr:nth-child(even) td { background: #f5f5f5; }
+    .pts { font-weight: bold; color: #1a3a6b; text-align: right; }
+    @media print {
+      body { padding: 12px; }
+      h2 { margin-top: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎮 Family Feud — Host Answer Key</h1>
+  <div class="subtitle">Printed ${new Date().toLocaleDateString()} — Keep this away from players!</div>
+  <h2>Regular Questions (${allQ.length})</h2>
+  ${renderQuestions(allQ, 'Q')}
+  <h2>Fast Money Questions (${fmQ.length})</h2>
+  ${renderQuestions(fmQ, 'FM')}
+</body>
+</html>`;
+
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+    }
   };
 
   const handleImport = (e) => {
@@ -135,6 +196,13 @@ export default function Admin() {
           </button>
           <h2 className="gold-shimmer text-3xl font-black uppercase">Question Manager</h2>
           <div className="flex gap-2">
+            <button
+              onClick={handlePrintAnswerKey}
+              className="px-3 py-2 bg-ff-gold text-ff-blue text-xs font-black uppercase rounded-lg border border-ff-gold hover:brightness-110 transition-all"
+              title="Open printable answer key in a new tab"
+            >
+              🖨 Answer Key
+            </button>
             <label className="px-3 py-2 bg-ff-tile text-white text-xs font-bold uppercase rounded-lg border border-blue-700 hover:border-ff-gold cursor-pointer transition-all">
               Import
               <input type="file" accept=".json" className="hidden" onChange={handleImport} />
@@ -276,14 +344,14 @@ export default function Admin() {
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-2">
                   <label className="text-blue-300 text-xs uppercase tracking-widest">
-                    Answers (must total 100 pts)
+                    Answers (filled answers must total 100 pts)
                   </label>
                   <span className={`text-xs font-bold ${
-                    editing.answers.reduce((s, a) => s + Number(a.points), 0) === 100
+                    editing.answers.filter(a => a.text.trim()).reduce((s, a) => s + Number(a.points), 0) === 100
                       ? 'text-ff-green'
                       : 'text-ff-red'
                   }`}>
-                    {editing.answers.reduce((s, a) => s + Number(a.points), 0)} / 100
+                    {editing.answers.filter(a => a.text.trim()).reduce((s, a) => s + Number(a.points), 0)} / 100
                   </span>
                 </div>
                 <div className="space-y-2">

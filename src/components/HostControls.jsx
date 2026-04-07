@@ -126,26 +126,27 @@ export default function HostControls() {
         Host Controls — {isLastRound ? '⭐ Double Points Round' : `Round ${currentRound + 1} of ${totalRounds}`}
       </div>
 
-      {/* Answer buttons */}
+      {/* Answer buttons — numbered only, no text shown (host uses printed answer key) */}
       <div className="space-y-2">
         <div className="text-blue-300 text-xs uppercase tracking-wider font-bold">Reveal Answer</div>
-        <div className="grid grid-cols-2 gap-2">
-          {currentQuestion.answers.map((ans, i) => {
+        <div className="grid grid-cols-4 gap-2">
+          {Array.from({ length: 8 }).map((_, i) => {
+            const hasAnswer = !!currentQuestion.answers[i];
             const isRevealed = revealedAnswers.includes(i);
             return (
               <button
                 key={i}
-                onClick={() => handleReveal(i)}
-                disabled={isRevealed}
-                className={`py-2 px-3 rounded-lg text-sm font-bold uppercase text-left transition-all flex items-center gap-2 ${
-                  isRevealed
-                    ? 'bg-ff-green text-white border border-green-500 opacity-70 cursor-default'
-                    : 'bg-ff-tile text-white border border-blue-600 hover:border-ff-gold hover:bg-blue-800'
+                onClick={() => hasAnswer && handleReveal(i)}
+                disabled={isRevealed || !hasAnswer}
+                className={`py-3 rounded-lg font-black text-lg transition-all border-2 ${
+                  !hasAnswer
+                    ? 'bg-ff-tile/30 text-blue-900 border-blue-900/30 cursor-default'
+                    : isRevealed
+                    ? 'bg-ff-green text-white border-green-500 cursor-default'
+                    : 'bg-ff-tile text-white border-blue-600 hover:border-ff-gold hover:bg-blue-800'
                 }`}
               >
-                <span className="text-xs opacity-60">{i + 1}.</span>
-                <span className="truncate text-xs">{ans.text}</span>
-                {isRevealed && <span className="ml-auto text-green-300 text-xs">{ans.points}pts</span>}
+                {isRevealed ? '✓' : i + 1}
               </button>
             );
           })}
